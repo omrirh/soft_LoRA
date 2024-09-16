@@ -11,3 +11,5 @@
 make setup-run
 ```
 
+#### After the training & evaluation phases are completed, you should see the session artifacts under `results` in your project.
+

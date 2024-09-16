@@ -1,5 +1,6 @@
 IMAGE_NAME = lora-experiment
 DOCKERFILE = Dockerfile
+HOST_RESULTS_DIR = /mnt/results
 
 build:
 	@echo "Building Docker image: $(IMAGE_NAME)..."
@@ -15,7 +16,7 @@ setup-gpu:
 
 experiment:
 	@echo "Running the Docker container with GPU utilization..."
-	docker run --gpus all -it $(IMAGE_NAME)
+	docker run --gpus all -it -v $(HOST_RESULTS_DIR):/soft_LoRA/results $(IMAGE_NAME)
 
 setup-run:
 	make setup-gpu
