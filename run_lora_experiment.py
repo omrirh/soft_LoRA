@@ -1,5 +1,6 @@
 import torch
 import numpy as np
+from typing import Tuple, Any, Dict
 from transformers import AutoModelForSequenceClassification, AutoTokenizer, Trainer, TrainingArguments
 from datasets import load_dataset
 from peft import LoraConfig, get_peft_model
@@ -41,7 +42,7 @@ def compute_metrics(eval_pred):
     return metric.compute(predictions=predictions, references=labels)
 
 
-def train_model(model: torch.nn.Module, tokenized_datasets):
+def train_model(model: torch.nn.Module, tokenized_datasets) -> Tuple[Trainer, torch.nn.Module]:
     training_args = TrainingArguments(
         output_dir="./results",
         evaluation_strategy="epoch",
@@ -63,14 +64,17 @@ def train_model(model: torch.nn.Module, tokenized_datasets):
 
     trainer.train()
 
-    eval_results = trainer.evaluate()
-    print(f"Evaluation results: {eval_results}")
+    return trainer, model
 
 
 def main():
     tokenized_datasets = load_glue_data("sst2")
     model = initialize_lora_model()
-    train_model(model, tokenized_datasets)
+
+    trainer, trained_model = train_model(model, tokenized_datasets)
+    eval_results = trainer.evaluate()
+
+    print(f"Evaluation results: {eval_results}")
 
 
 if __name__ == "__main__":
