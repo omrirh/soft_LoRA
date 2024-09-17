@@ -11,10 +11,12 @@ def load_glue_data(task_name: str = "sst2"):
     tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
 
     def tokenize_function(examples):
-        return tokenizer(examples["sentence"], padding="max_length", truncation=True)
+        # Return input_ids and attention_mask from the tokenizer
+        return tokenizer(examples["sentence"], padding="max_length", truncation=True, return_tensors="pt")
 
+    # Map the tokenizer function to the dataset
     tokenized_datasets = dataset.map(tokenize_function, batched=True)
-    tokenized_datasets.set_format(type="torch", columns=["input_ids", "label"])
+    tokenized_datasets.set_format(type="torch", columns=["input_ids", "attention_mask", "label"])
 
     return tokenized_datasets
 
