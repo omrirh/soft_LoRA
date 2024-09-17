@@ -42,7 +42,7 @@ def compute_metrics(eval_pred):
     return metric.compute(predictions=predictions, references=labels)
 
 
-def train_model(model: torch.nn.Module, tokenized_datasets) -> Tuple[Trainer, torch.nn.Module]:
+def train_model(model: torch.nn.Module, tokenized_datasets) -> Trainer:
     training_args = TrainingArguments(
         output_dir="./results",
         evaluation_strategy="epoch",
@@ -64,14 +64,14 @@ def train_model(model: torch.nn.Module, tokenized_datasets) -> Tuple[Trainer, to
 
     trainer.train()
 
-    return trainer, model
+    return trainer
 
 
 def main():
     tokenized_datasets = load_glue_data("sst2")
     model = initialize_lora_model()
 
-    trainer, trained_model = train_model(model, tokenized_datasets)
+    trainer = train_model(model, tokenized_datasets)
     eval_results = trainer.evaluate()
 
     print(f"Evaluation results: {eval_results}")
